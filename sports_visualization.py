@@ -192,8 +192,8 @@ elif view_mode == "三维雷达图":
     st.plotly_chart(fig, use_container_width=True)
 
 # -------------------------- 视图3：飞行模拟动画 --------------------------
-elif view_mode == "飞行模拟":
-    st.subheader("统一距离飞行模拟")
+elif view_mode == "飞行模拟动画":
+    st.subheader("统一距离飞行模拟（实时动画）")
     st.info(f"当前统一距离：**{custom_distance} 米** | 动画速度：{anim_speed}x")
 
     # 计算到达时间
@@ -263,5 +263,7 @@ elif view_mode == "飞行模拟":
 
         # 结论
         st.success(f"模拟完成！")
+        badminton = df_anim[df_anim["物体"] == "羽毛球"]["到达时间（秒）"].values
+        ferrari = df_anim[df_anim["物体"] == "法拉利 458"]["到达时间（秒）"].values
 
 st.markdown("---")
