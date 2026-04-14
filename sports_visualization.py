@@ -18,11 +18,11 @@ df = pd.DataFrame(data)
 color_map = {
     "羽毛球": "#FFD700",  # 亮黄色
     "法拉利 458": "#FF0000",  # 红色
-    "拳套": "#8B4513",
-    "乒乓球": "#1E90FF",
-    "足球": "#32CD32",
-    "棒球": "#FF6347",
-    "网球": "#FFA500"
+    "拳套": "#8B4513",  # 棕色
+    "乒乓球": "#1E90FF",  # 蓝色
+    "足球": "#32CD32",  # 绿色
+    "棒球": "#FF6347",  # 红色
+    "网球": "#FFA500"  # 橙色
 }
 
 # -------------------------- 页面基础设置 --------------------------
@@ -261,7 +261,6 @@ elif view_mode == "飞行模拟动画":
             chart.plotly_chart(fig_track, use_container_width=True)
             t += step
 
-        # 结论
         st.success(f"模拟完成！")
         badminton = df_anim[df_anim["物体"] == "羽毛球"]["到达时间（秒）"].values
         ferrari = df_anim[df_anim["物体"] == "法拉利 458"]["到达时间（秒）"].values
