@@ -3,45 +3,45 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
-from datetime import timedelta
+
+# 启动：streamlit run sports_visualization.py
 
 # -------------------------- 1. 数据配置 --------------------------
 data = {
-    "物体": ["拳套", "乒乓球", "足球（点球）", "羽毛球", "棒球", "网球", "法拉利 458"],
+    "物体": ["拳套", "乒乓球", "足球", "羽毛球", "棒球", "网球", "法拉利 458"],
     "最高速度（千米/时）": [56, 88, 112, 160, 160, 160, 320],
     "反应时间（秒）": [0.064, 0.112, 0.35, 0.225, 0.4149, 0.534, 0.64],
     "对应距离（米）": [1, 2.74, 10.9, 10, 18.4, 24, 402]
 }
 df = pd.DataFrame(data)
 
-# 配色方案（严格按需求）
 color_map = {
     "羽毛球": "#FFD700",  # 亮黄色
     "法拉利 458": "#FF0000",  # 红色
     "拳套": "#8B4513",
     "乒乓球": "#1E90FF",
-    "足球（点球）": "#32CD32",
+    "足球": "#32CD32",
     "棒球": "#FF6347",
     "网球": "#FFA500"
 }
 
-# -------------------------- 2. 页面基础设置 --------------------------
+# -------------------------- 页面基础设置 --------------------------
 st.set_page_config(
-    page_title="物体反应时间可视化",
+    page_title="物体运动数据可视化",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-st.title("🏎️ 物体反应速度 & 运动数据可视化系统")
+st.title("物体运动数据可视化")
 st.markdown("---")
 
-# -------------------------- 3. 侧边栏控制面板 --------------------------
+# -------------------------- 侧边栏控制面板 --------------------------
 with st.sidebar:
-    st.header("⚙️ 控制面板")
+    st.header("控制面板")
 
     # 视图切换
     view_mode = st.radio(
         "选择视图模式",
-        ["📊 动态条形图", "📈 三维雷达图", "🚀 飞行模拟动画"]
+        ["动态条形图", "三维雷达图", "飞行模拟动画"]
     )
 
     st.markdown("### 数据维度")
@@ -53,20 +53,20 @@ with st.sidebar:
     st.markdown("### 物体多选对比")
     all_items = df["物体"].tolist()
     selected_items = st.multiselect(
-        "勾选对比对象（2-3个最佳）",
+        "勾选对比对象",
         options=all_items,
         default=all_items
     )
 
     # 计算器：自定义距离
-    st.markdown("### 🧮 反应时间计算器")
+    st.markdown("### 反应时间计算器")
     custom_distance = st.number_input(
         "自定义对比距离（米）",
-        min_value=1.0, max_value=500.0, value=10.0, step=0.1
+        min_value=1.0, max_value=500.0, value=50.0, step=0.1
     )
 
     # 动画速度
-    if view_mode == "🚀 飞行模拟动画":
+    if view_mode == "飞行模拟动画":
         st.markdown("### 动画设置")
         anim_speed = st.select_slider("播放速度", options=[0.5, 1, 2], value=1)
 
@@ -74,7 +74,7 @@ with st.sidebar:
 df_filtered = df[df["物体"].isin(selected_items)].copy()
 
 
-# -------------------------- 4. 工具函数 --------------------------
+# -------------------------- 工具函数 --------------------------
 def kmh_to_ms(speed_kmh):
     return speed_kmh / 3.6
 
@@ -84,9 +84,9 @@ def calc_reaction_time(distance, speed_kmh):
     return distance / ms if ms != 0 else 0
 
 
-# -------------------------- 5. 视图1：动态条形图 --------------------------
-if view_mode == "📊 动态条形图":
-    st.subheader("📊 动态条形图（维度切换 + 对比分析）")
+# -------------------------- 视图1：动态条形图 --------------------------
+if view_mode == "动态条形图":
+    st.subheader("动态条形图（维度切换 + 对比分析）")
 
     # 排序逻辑
     if y_axis_option == "最高速度（千米/时）":
@@ -111,7 +111,7 @@ if view_mode == "📊 动态条形图":
     # 样式优化
     fig.update_traces(
         textposition="outside",
-        textfont=dict(size=13),
+        textfont=dict(size=14, color="black"),
         marker_line_width=2,
         marker_line_color="white",
         hovertemplate="<b>%{x}</b><br>"
@@ -128,57 +128,72 @@ if view_mode == "📊 动态条形图":
         showlegend=False,
         transition_duration=300,
         plot_bgcolor="white",
-        paper_bgcolor="white"
+        paper_bgcolor="white",
+
+        # 轴标题字体
+        xaxis=dict(
+            title_font=dict(size=15, color="black", family="Arial Bold"),
+            tickfont=dict(size=14, color="black")
+        ),
+        yaxis=dict(
+            title_font=dict(size=15, color="black", family="Arial Bold"),
+            tickfont=dict(size=14, color="black")
+        )
     )
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # 自定义距离计算结果
-    st.markdown(f"#### 🧮 自定义距离 {custom_distance} 米 反应时间计算")
-    df_calc = df_filtered.copy()
-    df_calc["计算反应时间（秒）"] = df_calc["最高速度（千米/时）"].apply(
-        lambda x: calc_reaction_time(custom_distance, x)
-    )
-    df_show = df_calc[["物体", "最高速度（千米/时）", "计算反应时间（秒）"]].sort_values("计算反应时间（秒）")
-    st.dataframe(df_show.style.format("{:.3f}", subset=["计算反应时间（秒）"]), use_container_width=True)
-
-# -------------------------- 6. 视图2：三维雷达图 --------------------------
-elif view_mode == "📈 三维雷达图":
-    st.subheader("📈 三维雷达图（速度/反应时间/距离 综合对比）")
+# -------------------------- 视图2：三维雷达图 --------------------------
+elif view_mode == "三维雷达图":
+    st.subheader("三维雷达图（速度 / 反应时间 / 对应距离 综合对比）")
 
     # 归一化 0~100%
     df_radar = df_filtered.copy()
     df_radar["速度归一化"] = df_radar["最高速度（千米/时）"] / df["最高速度（千米/时）"].max() * 100
     df_radar["反应时间归一化"] = (1 - df_radar["反应时间（秒）"] / df["反应时间（秒）"].max()) * 100
-    df_radar["距离归一化"] = df_radar["对应距离（米）"] / df["对应距离（米）"].max() * 100
+    df_radar["对应距离归一化"] = df_radar["对应距离（米）"] / df["对应距离（米）"].max() * 100
 
     fig = go.Figure()
-    categories = ["速度", "反应时间", "距离"]
+    categories = ["最高速度", "反应时间", "对应距离"]  # 明确标注三个维度
 
     for _, row in df_radar.iterrows():
         fig.add_trace(go.Scatterpolar(
-            r=[row["速度归一化"], row["反应时间归一化"], row["距离归一化"]],
+            r=[row["速度归一化"], row["反应时间归一化"], row["对应距离归一化"]],
             theta=categories,
             fill="toself",
             name=row["物体"],
             marker=dict(color=color_map[row["物体"]]),
             opacity=0.3,
             hovertemplate=f"<b>{row['物体']}</b><br>"
-                          f"速度: {row['速度归一化']:.0f}%<br>"
+                          f"最高速度: {row['速度归一化']:.0f}%<br>"
                           f"反应时间: {row['反应时间归一化']:.0f}%<br>"
-                          f"距离: {row['距离归一化']:.0f}%"
+                          f"对应距离: {row['对应距离归一化']:.0f}%"
         ))
 
     fig.update_layout(
-        polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, 100],
+                tickfont=dict(size=13, color="black"),
+                tickcolor="black",
+                tickvals=[0, 20, 40, 60, 80, 100],
+                ticktext=["0%", "20%", "40%", "60%", "80%", "100%"]
+            ),
+            angularaxis=dict(
+                tickfont=dict(size=15, color="white", family="Arial Bold"),
+                tickcolor="white"
+            )
+        ),
         height=600,
-        title="三维综合能力雷达图（100%为该项最大值）"
+        title="三维综合能力雷达图（100% = 该项最大值）<br>维度：最高速度 | 反应时间 | 对应距离",
+        font=dict(color="black", size=14)
     )
     st.plotly_chart(fig, use_container_width=True)
 
-# -------------------------- 7. 视图3：飞行模拟动画 --------------------------
-elif view_mode == "🚀 飞行模拟动画":
-    st.subheader("🚀 统一距离飞行模拟（实时动画）")
+# -------------------------- 视图3：飞行模拟动画 --------------------------
+elif view_mode == "飞行模拟":
+    st.subheader("统一距离飞行模拟")
     st.info(f"当前统一距离：**{custom_distance} 米** | 动画速度：{anim_speed}x")
 
     # 计算到达时间
@@ -189,10 +204,9 @@ elif view_mode == "🚀 飞行模拟动画":
     df_anim = df_anim.sort_values("到达时间（秒）")
 
     # 动画控制
-    col_anim1, col_anim2, col_anim3 = st.columns(3)
-    start = col_anim1.button("▶ 开始模拟")
-    pause = col_anim2.button("⏸ 暂停/继续")
-    reset = col_anim3.button("🔄 重置")
+    col_anim1, col_anim2 = st.columns(2)
+    start = col_anim1.button("开始模拟")
+    reset = col_anim2.button("重置")
 
     # 赛道画布
     fig_track = go.Figure()
@@ -243,18 +257,11 @@ elif view_mode == "🚀 飞行模拟动画":
                     text=f"{row['物体']} ({pos:.1f}m)", textposition="top center"
                 ))
 
-            time_display.metric("⏱️ 已用时间", f"{t:.2f} s / {max_time:.2f} s")
+            time_display.metric("已用时间", f"{t:.2f} s / {max_time:.2f} s")
             chart.plotly_chart(fig_track, use_container_width=True)
             t += step
 
         # 结论
-        st.success(f"✅ 模拟完成！")
-        badminton = df_anim[df_anim["物体"] == "羽毛球"]["到达时间（秒）"].values
-        ferrari = df_anim[df_anim["物体"] == "法拉利 458"]["到达时间（秒）"].values
-        if len(badminton) > 0 and len(ferrari) > 0:
-            delta = ferrari[0] - badminton[0]
-            st.info(
-                f"🔍 结论：{custom_distance}米距离下，羽毛球（{badminton[0]:.3f}s）比法拉利（{ferrari[0]:.3f}s）**早 {delta:.3f} 秒**到达！")
+        st.success(f"模拟完成！")
 
 st.markdown("---")
-st.caption("✅ 支持：维度切换 | 多选对比 | 自定义距离 | 雷达图 | 飞行动画 | 悬停详情")
