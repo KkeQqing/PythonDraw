@@ -150,7 +150,7 @@ elif view_mode == "三维雷达图":
     # 归一化 0~100%
     df_radar = df_filtered.copy()
     df_radar["速度归一化"] = df_radar["最高速度（千米/时）"] / df["最高速度（千米/时）"].max() * 100
-    df_radar["反应时间归一化"] = (1 - df_radar["反应时间（秒）"] / df["反应时间（秒）"].max()) * 100
+    df_radar["反应时间归一化"] = (df_radar["反应时间（秒）"] / df["反应时间（秒）"].max()) * 100
     df_radar["对应距离归一化"] = df_radar["对应距离（米）"] / df["对应距离（米）"].max() * 100
 
     fig = go.Figure()
