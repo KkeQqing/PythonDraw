@@ -47,7 +47,6 @@ df = pd.DataFrame(raw_data)
 # =========================
 def map_education_category(edu: str) -> str:
     """
-    按你的规则做优先级映射：
     法律（含法律/理科） > 商业（含商业/理科） > 理科（含纯理科、艺术/理科） > 其他
     """
     edu = str(edu)
@@ -99,17 +98,15 @@ df["hover_text"] = df.apply(
 # =========================
 # 3) 交互参数
 # =========================
-# 三段区域分界线
+# 区域分界线
 X1, X2 = 30, 40
 Y1, Y2 = 45, 55
 
-# 四象限分界线（为了“点击象限”简洁实现，这里用二分法）
-# 你原文是三段区域，但四象限需要一条竖线和一条横线
 QUAD_X = 30   # 22-30 视为“早进政坛”
 QUAD_Y = 45   # 35-45 视为“早当选”
 
 # 轴范围
-X_RANGE = [22, 60]
+X_RANGE = [20, 65]
 Y_RANGE = [30, 75]   # 为了兼容 31 和 74
 
 
@@ -156,10 +153,10 @@ def build_trend_figure(current_year: int):
 
 def add_quadrant_shapes(fig, active_quadrant=None):
     quadrants = {
-        "Q1": {"x0": 22, "x1": QUAD_X, "y0": QUAD_Y, "y1": 75, "label": "资深稳健型\n(早进政坛+晚当选)"},
-        "Q2": {"x0": QUAD_X, "x1": 60, "y0": QUAD_Y, "y1": 75, "label": "长期积累型\n(晚进政坛+晚当选)"},
-        "Q3": {"x0": 22, "x1": QUAD_X, "y0": 30, "y1": QUAD_Y, "label": "跨越式发展型\n(早进政坛+早当选)"},
-        "Q4": {"x0": QUAD_X, "x1": 60, "y0": 30, "y1": QUAD_Y, "label": "政治新星型\n(晚进政坛+早当选)"},
+        "Q1": {"x0": 20, "x1": QUAD_X, "y0": QUAD_Y, "y1": 75, "label": "资深稳健型\n(早进政坛+晚当选)"},
+        "Q2": {"x0": QUAD_X, "x1": 65, "y0": QUAD_Y, "y1": 75, "label": "长期积累型\n(晚进政坛+晚当选)"},
+        "Q3": {"x0": 20, "x1": QUAD_X, "y0": 30, "y1": QUAD_Y, "label": "跨越式发展型\n(早进政坛+早当选)"},
+        "Q4": {"x0": QUAD_X, "x1": 65, "y0": 30, "y1": QUAD_Y, "label": "政治新星型\n(晚进政坛+早当选)"},
     }
 
     for key, q in quadrants.items():
@@ -300,14 +297,12 @@ def build_scatter_figure(current_year: int, active_quadrant=None):
         gridcolor="#E5E7EB"
     )
 
-    # 三段区域注释
+    # 区域注释
     fig.add_annotation(x=26, y=31.5, text="早慧型", showarrow=False, font=dict(color="#2563EB", size=12))
     fig.add_annotation(x=35, y=31.5, text="常规型", showarrow=False, font=dict(color="#2563EB", size=12))
-    fig.add_annotation(x=50, y=31.5, text="晚成型", showarrow=False, font=dict(color="#2563EB", size=12))
 
     fig.add_annotation(x=22.8, y=40, text="快速晋升型", showarrow=False, textangle=-90, font=dict(color="#059669", size=12))
     fig.add_annotation(x=22.8, y=50, text="稳步发展型", showarrow=False, textangle=-90, font=dict(color="#059669", size=12))
-    fig.add_annotation(x=22.8, y=65, text="资深积累型", showarrow=False, textangle=-90, font=dict(color="#059669", size=12))
 
     return fig
 
@@ -354,12 +349,12 @@ def format_stats(selected_points_df: pd.DataFrame) -> html.Div:
 # 5) Dash App
 # =========================
 app = Dash(__name__)
-app.title = "领导人政治晋升路径可视化"
+app.title = "领导人政治晋升可视化"
 
 app.layout = html.Div(
     style={"fontFamily": "Arial, sans-serif", "padding": "20px", "background": "#F8FAFC"},
     children=[
-        html.H2("领导人政治晋升路径交互可视化"),
+        html.H2("领导人政治晋升路径可视化"),
         html.P("X轴：进入政坛年龄；Y轴：当选领导人年龄；点大小：任期总时长；点颜色：学历背景；点形状：政治路线。"),
 
         dcc.Store(id="play-state", data=False),
