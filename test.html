@@ -23,13 +23,7 @@ const data = [{
         {
             name: "鲁菜",
             origin: "山东",
-            taste: "咸鲜醇厚",
-            spicy: 1,
             historyYear: 2500,
-            popScore: 82,
-            skillLevel: 85,
-            healthScore: 72,
-            heatLevel: 65,
             feature: "北方代表、宫廷菜系",
             material: "牛羊肉、海鲜、豆制品",
             techCore: "爆、炒、烧、炖",
@@ -50,13 +44,7 @@ const data = [{
         {
             name: "川菜",
             origin: "四川/重庆",
-            taste: "麻辣辛香",
-            spicy: 5,
             historyYear: 2200,
-            popScore: 96,
-            skillLevel: 90,
-            healthScore: 58,
-            heatLevel: 78,
             feature: "国民度最高、复合味型",
             material: "辣椒、花椒、畜禽肉",
             techCore: "水煮、干煸、鱼香",
@@ -77,13 +65,7 @@ const data = [{
         {
             name: "粤菜",
             origin: "广东",
-            taste: "清鲜本味",
-            spicy: 1,
             historyYear: 2000,
-            popScore: 90,
-            skillLevel: 88,
-            healthScore: 85,
-            heatLevel: 55,
             feature: "清淡养生、原汁原味",
             material: "生鲜水产、禽肉、时令蔬果",
             techCore: "清蒸、白灼、煲制",
@@ -104,13 +86,7 @@ const data = [{
         {
             name: "苏菜",
             origin: "江苏",
-            taste: "清鲜平和",
-            spicy: 2,
             historyYear: 2300,
-            popScore: 78,
-            skillLevel: 86,
-            healthScore: 80,
-            heatLevel: 60,
             feature: "刀工精细、江南雅致",
             material: "河鲜、禽蛋、时令素菜",
             techCore: "清炖、糟溜、蜜汁",
@@ -131,13 +107,7 @@ const data = [{
         {
             name: "闽菜",
             origin: "福建",
-            taste: "甜淡鲜香",
-            spicy: 1,
             historyYear: 1800,
-            popScore: 70,
-            skillLevel: 82,
-            healthScore: 83,
-            heatLevel: 58,
             feature: "汤菜见长、酸甜柔和",
             material: "海产干货、菌菇、肉食",
             techCore: "红焖、糟醉、清煨",
@@ -158,13 +128,7 @@ const data = [{
         {
             name: "浙菜",
             origin: "浙江",
-            taste: "清鲜脆嫩",
-            spicy: 1,
             historyYear: 2100,
-            popScore: 75,
-            skillLevel: 84,
-            healthScore: 82,
-            heatLevel: 57,
             feature: "江南风味、鲜脆爽口",
             material: "淡水水产、笋类、茶叶食材",
             techCore: "滑炒、糟熘、清蒸",
@@ -185,13 +149,7 @@ const data = [{
         {
             name: "湘菜",
             origin: "湖南",
-            taste: "香辣浓郁",
-            spicy: 4,
             historyYear: 1900,
-            popScore: 88,
-            skillLevel: 83,
-            healthScore: 65,
-            heatLevel: 72,
             feature: "下饭重油、烟熏特色",
             material: "辣椒、腊味、淡水鱼",
             techCore: "小炒、剁椒、熏腊",
@@ -212,13 +170,7 @@ const data = [{
         {
             name: "徽菜",
             origin: "安徽",
-            taste: "咸鲜微甜",
-            spicy: 2,
             historyYear: 2400,
-            popScore: 68,
-            skillLevel: 80,
-            healthScore: 70,
-            heatLevel: 63,
             feature: "山林风味、炖焖为主",
             material: "山珍野味、豆制品、腌货",
             techCore: "红烧、炖焖、蒸酿",
@@ -251,13 +203,7 @@ const option = {
             if (d.origin) {
                 return `【${d.name}】<br/>
 📍发源地：${d.origin}<br/>
-🍽️核心味型：${d.taste}<br/>
-🌶️辣度等级：${d.spicy} / 5级<br/>
 📜历史传承：${d.historyYear} 年<br/>
-🔥热量指数：${d.heatLevel} 分<br/>
-❤️健康指数：${d.healthScore} 分<br/>
-⭐大众流行度：${d.popScore} 分<br/>
-👨🍳技法成熟度：${d.skillLevel} 分<br/>
 🥬核心食材：${d.material}<br/>
 🔪代表技法：${d.techCore}<br/>
 ✨菜系特色：${d.feature}`;
