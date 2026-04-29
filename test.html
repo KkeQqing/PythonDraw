@@ -2,248 +2,292 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>八大菜系 · 一体化层次交互可视化</title>
+    <title>八大菜系｜多维度一体化深度交互可视化</title>
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:#f2f5f8;padding:20px;font-family:"Microsoft YaHei",sans-serif;}
-        h1{text-align:center;margin-bottom:20px;color:#222;}
-        #main{width:100%;height:720px;background:#fff;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:20px;}
+        body{background:#f5f7fa; font-family:"Microsoft YaHei",sans-serif;}
+        h1{text-align:center; padding:12px 0; color:#222; font-size:24px; letter-spacing:2px;}
+        #main{width:100vw; height:90vh;}
     </style>
 </head>
 <body>
-    <h1>🍜 中国八大菜系 · 一体化层次交互图谱（可下钻）</h1>
+    <h1>🍲 中国八大菜系 · 多维度层级交互式可视化</h1>
     <div id="main"></div>
 
 <script>
-// ====================== 多维真实数据（有机层次结构）======================
+// ========== 超多维真实菜系数据（12大维度） ==========
 const data = [{
     name: "中国八大菜系",
     children: [
         {
             name: "鲁菜",
-            origin: "山东", taste: "咸鲜", spicy: 1,
-            history: 2500, pop: 82, skill: 85, health: 72, heat: 65,
+            origin: "山东",
+            taste: "咸鲜醇厚",
+            spicy: 1,
+            historyYear: 2500,
+            popScore: 82,
+            skillLevel: 85,
+            healthScore: 72,
+            heatLevel: 65,
+            feature: "北方代表、宫廷菜系",
+            material: "牛羊肉、海鲜、豆制品",
+            techCore: "爆、炒、烧、炖",
+            itemStyle: {color: "#F59E0B"},
             children: [
-                {
-                    name: "咸鲜醇厚",
-                    children: [
-                        { name: "爆炒", value: 12 },
-                        { name: "清炖", value: 10 },
-                        { name: "红烧", value: 8 }
-                    ]
-                },
-                {
-                    name: "经典名菜",
-                    children: [
-                        { name: "九转大肠", value: 5 },
-                        { name: "葱烧海参", value: 4 },
-                        { name: "油焖大虾", value: 3 }
-                    ]
-                }
+                {name: "风味体系",itemStyle:{color:"#FBBF24"},children:[
+                    {name:"咸鲜",value:12,itemStyle:{color:"#FCD34D"}},
+                    {name:"酱香",value:10,itemStyle:{color:"#FDE68A"}},
+                    {name:"醇厚",value:8,itemStyle:{color:"#FEF3C7"}}
+                ]},
+                {name: "经典名菜",itemStyle:{color:"#F59E0B"},children:[
+                    {name:"九转大肠",value:5},
+                    {name:"葱烧海参",value:4},
+                    {name:"油焖大虾",value:3}
+                ]}
             ]
         },
         {
             name: "川菜",
-            origin: "四川", taste: "麻辣", spicy: 5,
-            history: 2200, pop: 96, skill: 90, health: 58, heat: 78,
+            origin: "四川/重庆",
+            taste: "麻辣辛香",
+            spicy: 5,
+            historyYear: 2200,
+            popScore: 96,
+            skillLevel: 90,
+            healthScore: 58,
+            heatLevel: 78,
+            feature: "国民度最高、复合味型",
+            material: "辣椒、花椒、畜禽肉",
+            techCore: "水煮、干煸、鱼香",
+            itemStyle: {color: "#DC2626"},
             children: [
-                {
-                    name: "麻辣辛香",
-                    children: [
-                        { name: "干煸", value: 14 },
-                        { name: "水煮", value: 11 },
-                        { name: "鱼香", value: 9 }
-                    ]
-                },
-                {
-                    name: "经典名菜",
-                    children: [
-                        { name: "麻婆豆腐", value: 5 },
-                        { name: "宫保鸡丁", value: 4 },
-                        { name: "水煮鱼", value: 3 }
-                    ]
-                }
+                {name: "风味体系",itemStyle:{color:"#EF4444"},children:[
+                    {name:"麻辣",value:14,itemStyle:{color:"#F87171"}},
+                    {name:"鱼香",value:11,itemStyle:{color:"#FCA5A5"}},
+                    {name:"酸辣",value:9,itemStyle:{color:"#FECDD3"}}
+                ]},
+                {name: "经典名菜",itemStyle:{color:"#DC2626"},children:[
+                    {name:"麻婆豆腐",value:5},
+                    {name:"宫保鸡丁",value:4},
+                    {name:"水煮鱼",value:3}
+                ]}
             ]
         },
         {
             name: "粤菜",
-            origin: "广东", taste: "清鲜", spicy: 1,
-            history: 2000, pop: 90, skill: 88, health: 85, heat: 55,
+            origin: "广东",
+            taste: "清鲜本味",
+            spicy: 1,
+            historyYear: 2000,
+            popScore: 90,
+            skillLevel: 88,
+            healthScore: 85,
+            heatLevel: 55,
+            feature: "清淡养生、原汁原味",
+            material: "生鲜水产、禽肉、时令蔬果",
+            techCore: "清蒸、白灼、煲制",
+            itemStyle: {color: "#059669"},
             children: [
-                {
-                    name: "清鲜本味",
-                    children: [
-                        { name: "清蒸", value: 13 },
-                        { name: "白灼", value: 10 },
-                        { name: "煲仔", value: 8 }
-                    ]
-                },
-                {
-                    name: "经典名菜",
-                    children: [
-                        { name: "白切鸡", value: 5 },
-                        { name: "清蒸鱼", value: 4 },
-                        { name: "烧鹅", value: 3 }
-                    ]
-                }
+                {name: "风味体系",itemStyle:{color:"#10B981"},children:[
+                    {name:"鲜甜",value:13,itemStyle:{color:"#34D399"}},
+                    {name:"清淡",value:10,itemStyle:{color:"#6EE7B7"}},
+                    {name:"浓香",value:8,itemStyle:{color:"#A7F3D0"}}
+                ]},
+                {name: "经典名菜",itemStyle:{color:"#059669"},children:[
+                    {name:"白切鸡",value:5},
+                    {name:"清蒸石斑",value:4},
+                    {name:"广式烧鹅",value:3}
+                ]}
             ]
         },
         {
             name: "苏菜",
-            origin: "江苏", taste: "清鲜平和", spicy: 2,
-            history: 2300, pop: 78, skill: 86, health: 80, heat: 60,
+            origin: "江苏",
+            taste: "清鲜平和",
+            spicy: 2,
+            historyYear: 2300,
+            popScore: 78,
+            skillLevel: 86,
+            healthScore: 80,
+            heatLevel: 60,
+            feature: "刀工精细、江南雅致",
+            material: "河鲜、禽蛋、时令素菜",
+            techCore: "清炖、糟溜、蜜汁",
+            itemStyle: {color: "#2563EB"},
             children: [
-                {
-                    name: "清鲜平和",
-                    children: [
-                        { name: "清炖", value: 11 },
-                        { name: "糟溜", value: 9 },
-                        { name: "蜜汁", value: 7 }
-                    ]
-                },
-                {
-                    name: "经典名菜",
-                    children: [
-                        { name: "松鼠桂鱼", value: 5 },
-                        { name: "狮子头", value: 4 },
-                        { name: "文思豆腐", value: 3 }
-                    ]
-                }
+                {name: "风味体系",itemStyle:{color:"#3B82F6"},children:[
+                    {name:"咸鲜",value:11,itemStyle:{color:"#60A5FA"}},
+                    {name:"清甜",value:9,itemStyle:{color:"#93C5FD"}},
+                    {name:"淡雅",value:7,itemStyle:{color:"#BFDBFE"}}
+                ]},
+                {name: "经典名菜",itemStyle:{color:"#2563EB"},children:[
+                    {name:"松鼠桂鱼",value:5},
+                    {name:"红烧狮子头",value:4},
+                    {name:"文思豆腐",value:3}
+                ]}
             ]
         },
         {
             name: "闽菜",
-            origin: "福建", taste: "甜淡鲜香", spicy: 1,
-            history: 1800, pop: 70, skill: 82, health: 83, heat: 58,
+            origin: "福建",
+            taste: "甜淡鲜香",
+            spicy: 1,
+            historyYear: 1800,
+            popScore: 70,
+            skillLevel: 82,
+            healthScore: 83,
+            heatLevel: 58,
+            feature: "汤菜见长、酸甜柔和",
+            material: "海产干货、菌菇、肉食",
+            techCore: "红焖、糟醉、清煨",
+            itemStyle: {color: "#7C3AED"},
             children: [
-                {
-                    name: "甜淡鲜香",
-                    children: [
-                        { name: "红焖", value: 10 },
-                        { name: "糟醉", value: 8 },
-                        { name: "清煨", value: 7 }
-                    ]
-                },
-                {
-                    name: "经典名菜",
-                    children: [
-                        { name: "佛跳墙", value: 5 },
-                        { name: "荔枝肉", value: 4 },
-                        { name: "南煎肝", value: 3 }
-                    ]
-                }
+                {name: "风味体系",itemStyle:{color:"#8B5CF6"},children:[
+                    {name:"酸甜",value:10,itemStyle:{color:"#A78BFA"}},
+                    {name:"鲜香",value:8,itemStyle:{color:"#C4B5FD"}},
+                    {name:"淡爽",value:7,itemStyle:{color:"#DDD6FE"}}
+                ]},
+                {name: "经典名菜",itemStyle:{color:"#7C3AED"},children:[
+                    {name:"佛跳墙",value:5},
+                    {name:"荔枝肉",value:4},
+                    {name:"南煎肝",value:3}
+                ]}
             ]
         },
         {
             name: "浙菜",
-            origin: "浙江", taste: "清鲜脆嫩", spicy: 1,
-            history: 2100, pop: 75, skill: 84, health: 82, heat: 57,
+            origin: "浙江",
+            taste: "清鲜脆嫩",
+            spicy: 1,
+            historyYear: 2100,
+            popScore: 75,
+            skillLevel: 84,
+            healthScore: 82,
+            heatLevel: 57,
+            feature: "江南风味、鲜脆爽口",
+            material: "淡水水产、笋类、茶叶食材",
+            techCore: "滑炒、糟熘、清蒸",
+            itemStyle: {color: "#DB2777"},
             children: [
-                {
-                    name: "清鲜脆嫩",
-                    children: [
-                        { name: "滑炒", value: 11 },
-                        { name: "清蒸", value: 9 },
-                        { name: "糟熘", value: 8 }
-                    ]
-                },
-                {
-                    name: "经典名菜",
-                    children: [
-                        { name: "西湖醋鱼", value: 5 },
-                        { name: "龙井虾仁", value: 4 },
-                        { name: "东坡肉", value: 3 }
-                    ]
-                }
+                {name: "风味体系",itemStyle:{color:"#EC4899"},children:[
+                    {name:"清鲜",value:11,itemStyle:{color:"#F472B6"}},
+                    {name:"酸甜",value:9,itemStyle:{color:"#F9A8D4"}},
+                    {name:"脆香",value:8,itemStyle:{color:"#FBCFE8"}}
+                ]},
+                {name: "经典名菜",itemStyle:{color:"#DB2777"},children:[
+                    {name:"西湖醋鱼",value:5},
+                    {name:"龙井虾仁",value:4},
+                    {name:"东坡肉",value:3}
+                ]}
             ]
         },
         {
             name: "湘菜",
-            origin: "湖南", taste: "香辣", spicy: 4,
-            history: 1900, pop: 88, skill: 83, health: 65, heat: 72,
+            origin: "湖南",
+            taste: "香辣浓郁",
+            spicy: 4,
+            historyYear: 1900,
+            popScore: 88,
+            skillLevel: 83,
+            healthScore: 65,
+            heatLevel: 72,
+            feature: "下饭重油、烟熏特色",
+            material: "辣椒、腊味、淡水鱼",
+            techCore: "小炒、剁椒、熏腊",
+            itemStyle: {color: "#EA580C"},
             children: [
-                {
-                    name: "香辣浓郁",
-                    children: [
-                        { name: "小炒", value: 13 },
-                        { name: "剁椒", value: 10 },
-                        { name: "熏腊", value: 8 }
-                    ]
-                },
-                {
-                    name: "经典名菜",
-                    children: [
-                        { name: "剁椒鱼头", value: 5 },
-                        { name: "辣椒炒肉", value: 4 },
-                        { name: "腊味合蒸", value: 3 }
-                    ]
-                }
+                {name: "风味体系",itemStyle:{color:"#F97316"},children:[
+                    {name:"香辣",value:13,itemStyle:{color:"#FB923C"}},
+                    {name:"咸辣",value:10,itemStyle:{color:"#FDBA74"}},
+                    {name:"腊香",value:8,itemStyle:{color:"#FED7AA"}}
+                ]},
+                {name: "经典名菜",itemStyle:{color:"#EA580C"},children:[
+                    {name:"剁椒鱼头",value:5},
+                    {name:"辣椒炒肉",value:4},
+                    {name:"腊味合蒸",value:3}
+                ]}
             ]
         },
         {
             name: "徽菜",
-            origin: "安徽", taste: "咸鲜微甜", spicy: 2,
-            history: 2400, pop: 68, skill: 80, health: 70, heat: 63,
+            origin: "安徽",
+            taste: "咸鲜微甜",
+            spicy: 2,
+            historyYear: 2400,
+            popScore: 68,
+            skillLevel: 80,
+            healthScore: 70,
+            heatLevel: 63,
+            feature: "山林风味、炖焖为主",
+            material: "山珍野味、豆制品、腌货",
+            techCore: "红烧、炖焖、蒸酿",
+            itemStyle: {color: "#4B5563"},
             children: [
-                {
-                    name: "咸鲜微甜",
-                    children: [
-                        { name: "红烧", value: 12 },
-                        { name: "炖焖", value: 9 },
-                        { name: "蒸酿", value: 7 }
-                    ]
-                },
-                {
-                    name: "经典名菜",
-                    children: [
-                        { name: "臭鳜鱼", value: 5 },
-                        { name: "毛豆腐", value: 4 },
-                        { name: "红烧马鞍桥", value: 3 }
-                    ]
-                }
+                {name: "风味体系",itemStyle:{color:"#6B7280"},children:[
+                    {name:"咸鲜",value:12,itemStyle:{color:"#9CA3AF"}},
+                    {name:"腊香",value:9,itemStyle:{color:"#D1D5DB"}},
+                    {name:"微甜",value:7,itemStyle:{color:"#E5E7EB"}}
+                ]},
+                {name: "经典名菜",itemStyle:{color:"#4B5563"},children:[
+                    {name:"臭鳜鱼",value:5},
+                    {name:"毛豆腐",value:4},
+                    {name:"红烧马鞍桥",value:3}
+                ]}
             ]
         }
     ]
 }];
 
-// ====================== 初始化旭日图（一体化层次）======================
 const chart = echarts.init(document.getElementById('main'));
 const option = {
     tooltip: {
         trigger: 'item',
+        backgroundColor: "rgba(0,0,0,0.8)",
+        textStyle: {color:"#fff",fontSize:13,lineHeight:1.6},
+        padding:12,
         formatter: function (params) {
             const d = params.data;
-            if (d.origin) { // 菜系层：显示全部维度
-                return `${d.name}<br/>
-                        发源地：${d.origin}<br/>
-                        味型：${d.taste}<br/>
-                        辣度：${d.spicy}/5<br/>
-                        历史：${d.history}年<br/>
-                        流行度：${d.pop}分<br/>
-                        技法丰富度：${d.skill}分<br/>
-                        健康指数：${d.health}分<br/>
-                        热量：${d.heat} kcal`;
+            if (d.origin) {
+                return `【${d.name}】<br/>
+📍发源地：${d.origin}<br/>
+🍽️核心味型：${d.taste}<br/>
+🌶️辣度等级：${d.spicy} / 5级<br/>
+📜历史传承：${d.historyYear} 年<br/>
+🔥热量指数：${d.heatLevel} 分<br/>
+❤️健康指数：${d.healthScore} 分<br/>
+⭐大众流行度：${d.popScore} 分<br/>
+👨🍳技法成熟度：${d.skillLevel} 分<br/>
+🥬核心食材：${d.material}<br/>
+🔪代表技法：${d.techCore}<br/>
+✨菜系特色：${d.feature}`;
             }
-            return d.name; // 内层只显示名称
+            return `▸ ${d.name}`;
         }
     },
     series: [{
         type: 'sunburst',
-        data: data,
-        radius: ['15%', '90%'],
+        radius: ['5%', '98%'],
+        center: ['50%','50%'],
         label: {
             rotate: 'radial',
-            fontSize: 14
+            fontSize: 15,
+            fontWeight: "500"
         },
         emphasis: {
-            focus: 'descendant'
-        }
+            focus: 'descendant',
+            itemStyle: {shadowBlur:20,shadowColor:"rgba(0,0,0,0.25)"}
+        },
+        itemStyle: {
+            borderRadius: 8,
+            borderColor: "#ffffff",
+            borderWidth: 2
+        },
+        data: data
     }]
 };
-chart.setOption(option);
 
-// 自适应
+chart.setOption(option);
 window.addEventListener('resize', () => chart.resize());
 </script>
 </body>
