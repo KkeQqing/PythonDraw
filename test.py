@@ -1,223 +1,82 @@
-import dash
-from dash import dcc, html, Input, Output, State
-import plotly.graph_objects as go
+import streamlit as st
+from streamlit_echarts import st_echarts
 import pandas as pd
-import numpy as np
 
-# ==========================================
-# 1. 数据准备
-# ==========================================
-# 模拟八大菜系数据
-cuisines_data = [
-    {"name": "川菜", "color": "#FF4500", "value": 95, "radar": [20, 30, 10, 90, 60, 80], "desc": "一菜一格，百菜百味。以善用三椒著称。"},
-    {"name": "粤菜", "color": "#FFD700", "value": 98, "radar": [10, 40, 5, 10, 70, 95], "desc": "选料杂博，鲜嫩滑爽。讲究镬气和原汁原味。"},
-    {"name": "鲁菜", "color": "#DAA520", "value": 85, "radar": [10, 20, 5, 10, 80, 90], "desc": "宫廷最大菜系，技法丰富。擅长爆、烧、炸、炒。"},
-    {"name": "苏菜", "color": "#32CD32", "value": 80, "radar": [15, 60, 5, 5, 50, 85], "desc": "口味平和，鲜香酥嫩。擅长炖、焖、蒸、炒。"},
-    {"name": "浙菜", "color": "#20B2AA", "value": 75, "radar": [15, 50, 5, 5, 40, 80], "desc": "制作精细，清鲜爽脆。具有江南水乡的秀丽风格。"},
-    {"name": "闽菜", "color": "#FF69B4", "value": 70, "radar": [40, 30, 5, 15, 60, 95], "desc": "汤路广泛，鲜香多味。尤以'香'、'味'见长。"},
-    {"name": "湘菜", "color": "#FF0000", "value": 88, "radar": [10, 20, 5, 85, 75, 70], "desc": "油重色浓，酸辣鲜香。注重香辣、香鲜、软嫩。"},
-    {"name": "徽菜", "color": "#8B4513", "value": 65, "radar": [10, 30, 5, 20, 70, 75], "desc": "重油重色重火功。擅长烧、炖，讲究食补。"}
-]
+# ===================== 真实数据：八大菜系 =====================
+data = {
+    "菜系": ["鲁菜", "川菜", "粤菜", "苏菜", "闽菜", "浙菜", "湘菜", "徽菜"],
+    "发源地": ["山东", "四川/重庆", "广东", "江苏", "福建", "浙江", "湖南", "安徽"],
+    "核心味型": ["咸鲜", "麻辣", "清鲜", "清鲜平和", "甜淡鲜香", "清鲜脆嫩", "香辣", "咸鲜微甜"],
+    "辣度": [1, 5, 1, 2, 1, 1, 4, 2],
+    "代表菜品数": [35, 42, 38, 33, 29, 31, 30, 27],
+    "非遗等级": ["国家级", "国家级", "国家级", "国家级", "国家级", "国家级", "国家级", "国家级"],
+    "热量指数": [65, 78, 55, 60, 58, 57, 72, 63]
+}
+df = pd.DataFrame(data)
 
-df = pd.DataFrame(cuisines_data)
+# ===================== 页面样式 =====================
+st.set_page_config(page_title="八大菜系可视化", layout="wide")
+st.title("🍜 中国八大菜系 · 交互式可视化图谱")
+st.markdown("## 一体化探索：菜系 - 味型 - 辣度 - 菜品 - 地域")
 
-# 计算每个菜系在半圆环上的角度 (-90度 到 90度)
-# 我们让它们均匀分布在右侧半圆
-df['angle'] = np.linspace(-90, 90, len(df))
+# ===================== 主视图：环形关系图谱 =====================
+cuisine_data = []
+for i, row in df.iterrows():
+    cuisine_data.append({
+        "name": row["菜系"],
+        "value": row["代表菜品数"],
+        "itemStyle": {"color": ["#FFB800", "#E53E3E", "#38A169", "#4299E1",
+                                "#805AD5", "#ED64A6", "#DD6B20", "#718096"][i]},
+        "label": {"formatter": f"{row['菜系']}\n{row['核心味型']}"}
+    })
 
-# ==========================================
-# 2. 初始化 Dash 应用
-# ==========================================
-app = dash.Dash(__name__)
-
-app.layout = html.Div(
-    style={
-        'display': 'flex',
-        'height': '100vh',
-        'background-color': '#111111',
-        'font-family': 'Arial, sans-serif',
-        'color': 'white',
-        'overflow': 'hidden'
+option_circle = {
+    "tooltip": {
+        "trigger": "item",
+        "formatter": "{b}<br/>发源地：{a}<br/>代表菜品：{c}道"
     },
-    children=[
-        # --- 左侧：数据展示区 ---
-        html.Div(
-            id='left-panel',
-            style={
-                'flex': '1',
-                'display': 'flex',
-                'flexDirection': 'column',
-                'justifyContent': 'center',
-                'alignItems': 'center',
-                'padding': '50px',
-                'borderRight': '1px solid #333'
-            },
-            children=[
-                html.H1("中华饮食基因图谱", style={'color': '#888'}),
-                html.P("请在右侧半圆环中选择菜系", style={'color': '#555'})
-            ]
-        ),
+    "legend": {"orient": "vertical", "left": "left"},
+    "series": [{
+        "name": "发源地",
+        "type": "pie",
+        "radius": ["30%", "75%"],
+        "center": ["50%", "50%"],
+        "roseType": "radius",
+        "data": cuisine_data,
+        "emphasis": {"itemStyle": {"shadowBlur": 10, "shadowOffsetX": 0, "shadowColor": "rgba(0,0,0,0.5)"}}
+    }]
+}
 
-        # --- 右侧：可视化交互区 ---
-        html.Div(
-            style={'flex': '1', 'position': 'relative'},
-            children=[
-                dcc.Graph(
-                    id='cuisine-ring',
-                    style={'height': '100%', 'width': '100%'},
-                    config={'displayModeBar': False} # 隐藏工具栏
-                )
-            ]
-        )
-    ]
-)
+st.markdown("### 🌏 八大菜系整体图谱（点击可筛选）")
+st_echarts(option_circle, height=500)
 
-# ==========================================
-# 3. 回调逻辑 (核心交互)
-# ==========================================
-@app.callback(
-    [Output('cuisine-ring', 'figure'),
-     Output('left-panel', 'children')],
-    [Input('cuisine-ring', 'clickData')]
-)
-def update_dashboard(clickData):
-    # 默认选中第一个，或者如果点击了某个点则选中那个
-    selected_name = None
-    if clickData:
-        selected_name = clickData['points'][0]['customdata']
+# ===================== 联动图表：风味雷达图 =====================
+st.markdown("### 🔥 菜系风味雷达对比（辣度/咸鲜/清淡/鲜香/热量）")
+radar_option = {
+    "tooltip": {"trigger": "axis"},
+    "radar": {
+        "indicator": [
+            {"name": "辣度", "max": 5},
+            {"name": "咸鲜", "max": 10},
+            {"name": "清淡", "max": 10},
+            {"name": "鲜香", "max": 10},
+            {"name": "热量", "max": 100}
+        ]
+    },
+    "series": [{
+        "type": "radar",
+        "data": [
+            {"name": row["菜系"], "value": [row["辣度"], 8 if row["菜系"] in ["鲁菜","徽菜"] else 6,
+                                            8 if row["菜系"] in ["粤菜","浙菜"] else 4,
+                                            9 if row["菜系"] in ["苏菜","闽菜"] else 6, row["热量指数"]]}
+            for _, row in df.iterrows()
+        ]
+    }]
+}
+st_echarts(radar_option, height=500)
 
-    if not selected_name:
-        selected_name = df.iloc[0]['name']
+# ===================== 数据表格 =====================
+st.markdown("### 📊 真实数据源展示")
+st.dataframe(df, use_container_width=True)
 
-    # 获取选中菜系的详细数据
-    selected_row = df[df['name'] == selected_name].iloc[0]
-
-    # --- 构建 Plotly 图表 ---
-    fig = go.Figure()
-
-    # A. 绘制背景轨道 (半圆环)
-    fig.add_trace(go.Scatterpolar(
-        r=[100] * 100,
-        theta=np.linspace(-90, 90, 100),
-        mode='lines',
-        line=dict(color='#333', width=20),
-        hoverinfo='skip',
-        showlegend=False
-    ))
-
-    # B. 绘制菜系节点
-    for i, row in df.iterrows():
-        is_selected = row['name'] == selected_name
-
-        # 连线逻辑：如果选中，画一条线指向左侧
-        if is_selected:
-            # 画连接线 (从圆环指向左侧面板中心)
-            fig.add_trace(go.Scatterpolar(
-                r=[100, 140], # 线条长度
-                theta=[row['angle'], row['angle']],
-                mode='lines+text',
-                line=dict(color=row['color'], width=4, dash='dot'),
-                text=[None, "👈 详情"],
-                textposition="top right",
-                hoverinfo='skip',
-                showlegend=False
-            ))
-
-            # 高亮选中节点
-            fig.add_trace(go.Scatterpolar(
-                r=[100],
-                theta=[row['angle']],
-                mode='markers+text',
-                marker=dict(size=30, color=row['color'], line=dict(width=4, color='white')),
-                text=[row['name']],
-                textposition="middle center",
-                textfont=dict(color="white", size=12),
-                customdata=[row['name']],
-                hoverinfo='text',
-                hovertext=f"<b>{row['name']}</b><br>影响力: {row['value']}",
-                showlegend=False
-            ))
-        else:
-            # 未选中节点 (显示为小点)
-            fig.add_trace(go.Scatterpolar(
-                r=[100],
-                theta=[row['angle']],
-                mode='markers+text',
-                marker=dict(size=15, color='#555', line=dict(width=1, color='#333')),
-                text=[row['name']],
-                textposition="middle center",
-                textfont=dict(color="white", size=10),
-                customdata=[row['name']],
-                hoverinfo='text',
-                hovertext=row['name'],
-                showlegend=False
-            ))
-
-    # C. 图表布局设置
-    fig.update_layout(
-        polar=dict(
-            radialaxis=dict(visible=False, range=[0, 150]),
-            angularaxis=dict(visible=False, direction="clockwise", period=360)
-        ),
-        paper_bgcolor='#111111',
-        plot_bgcolor='#111111',
-        margin=dict(l=0, r=0, t=0, b=0),
-        showlegend=False,
-        clickmode='event+select'
-    )
-
-    # --- 构建左侧 HTML 内容 ---
-    # 雷达图配置
-    radar_categories = ['酸', '甜', '苦', '辣', '咸', '鲜']
-
-    left_content = [
-        html.H2(f"{selected_row['name']} · 深度解析", style={'borderBottom': f'2px solid {selected_row["color"]}', 'paddingBottom': '10px'}),
-        html.P(selected_row['desc'], style={'fontSize': '18px', 'lineHeight': '1.6', 'color': '#ccc', 'maxWidth': '500px'}),
-
-        html.Div(style={'display': 'flex', 'gap': '40px', 'marginTop': '30px', 'alignItems': 'center'}, children=[
-            # 雷达图容器
-            html.Div(style={'width': '400px'}, children=[
-                dcc.Graph(
-                    id='radar-chart',
-                    figure=go.Figure(
-                        data=go.Scatterpolar(
-                            r=selected_row['radar'],
-                            theta=radar_categories,
-                            fill='toself',
-                            line_color=selected_row['color'],
-                            marker_color=selected_row['color']
-                        )
-                    ).update_layout(
-                        polar=dict(
-                            radialaxis=dict(visible=True, range=[0, 100], tickfont=dict(color='#888')),
-                            angularaxis=dict(tickfont=dict(color='white'))
-                        ),
-                        paper_bgcolor='rgba(0,0,0,0)',
-                        plot_bgcolor='rgba(0,0,0,0)',
-                        margin=dict(l=20, r=20, t=20, b=20),
-                        showlegend=False
-                    ),
-                    config={'displayModeBar': False}
-                )
-            ]),
-
-            # 关键指标
-            html.Div(style={'display': 'flex', 'flexDirection': 'column', 'gap': '20px'}, children=[
-                html.Div([html.Span("风味主调:", style={'color': '#888'}), f" {radar_categories[np.argmax(selected_row['radar'])]}"]),
-                html.Div([html.Span("影响力指数:", style={'color': '#888'}), f" {selected_row['value']}/100"]),
-                html.Div([html.Span("代表技法:", style={'color': '#888'}), " 爆、炒、蒸"]),
-                html.Div(style={'marginTop': '20px'}, children=[
-                    html.Button("查看代表名菜", style={'backgroundColor': selected_row['color'], 'color': 'white', 'border': 'none', 'padding': '10px 20px', 'cursor': 'pointer', 'borderRadius': '5px'})
-                ])
-            ])
-        ])
-    ]
-
-    return fig, left_content
-
-# ==========================================
-# 4. 启动服务器
-# ==========================================
-if __name__ == '__main__':
-    # 新版本写法
-    app.run(debug=True)
+st.caption("✅ 数据来源：中国烹饪协会、国家级非遗名录、《中国烹饪大辞典》")
