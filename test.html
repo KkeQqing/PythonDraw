@@ -6,8 +6,8 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:#f5f7fa; font-family:"Microsoft YaHei",sans-serif;}
-        h1{text-align:center; padding:12px 0; color:#222; font-size:24px; letter-spacing:2px;}
+        body{background:#f8f9fa; font-family:"Microsoft YaHei",sans-serif;}
+        h1{text-align:center; padding:20px 0; color:#2c3e50; font-size:30px; letter-spacing:2px; font-weight:600;}
         #main{width:100vw; height:90vh;}
     </style>
 </head>
@@ -319,12 +319,12 @@ const chart = echarts.init(document.getElementById('main'));
 const option = {
     tooltip: {
         trigger: 'item',
-        backgroundColor: "rgba(0,0,0,0.8)",
-        textStyle: {color:"#fff",fontSize:13,lineHeight:1.6},
-        padding:12,
+        backgroundColor: "rgba(30,30,30,0.9)",
+        textStyle: {color:"#fff",fontSize:15,lineHeight:1.8},
+        padding:15,
+        borderRadius:8,
         formatter: function (params) {
             const d = params.data;
-            // 菜系层级信息
             if (d.origin) {
                 return `【${d.name}】<br/>
 📍发源地：${d.origin}<br/>
@@ -333,7 +333,6 @@ const option = {
 🔪代表技法：${d.techCore}<br/>
 ✨菜系特色：${d.feature}`;
             }
-            // 仅菜品层级 展示多维度详情：食材+做法+风味
             if (dishInfo[d.name]) {
                 const info = dishInfo[d.name];
                 return `🍽️【${d.name}】<br/>
@@ -341,27 +340,36 @@ const option = {
 👨‍🍳制作做法：${info.method}<br/>
 ✨风味特点：${info.feature}`;
             }
-            // 风味体系层级 只显示名称
             return `▸ ${d.name}`;
         }
     },
     series: [{
         type: 'sunburst',
-        radius: ['5%', '98%'],
+        radius: ['8%', '92%'],
         center: ['50%','50%'],
         label: {
             rotate: 'radial',
-            fontSize: 15,
-            fontWeight: "500"
+            fontSize: 17,
+            fontWeight: "500",
+            color: "#fff",
+            show: true,
+            overflow: 'break'
         },
         emphasis: {
             focus: 'descendant',
-            itemStyle: {shadowBlur:20,shadowColor:"rgba(0,0,0,0.25)"}
+            label: {
+                fontSize: 19,
+                fontWeight: "bold"
+            },
+            itemStyle: {
+                shadowBlur:15,
+                shadowColor:"rgba(0,0,0,0.3)"
+            }
         },
         itemStyle: {
-            borderRadius: 8,
+            borderRadius: 10,
             borderColor: "#ffffff",
-            borderWidth: 2
+            borderWidth: 1.5
         },
         data: data
     }]
