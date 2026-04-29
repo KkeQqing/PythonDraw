@@ -2,309 +2,249 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>八大菜系风味图谱</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>八大菜系 · 一体化层次交互可视化</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
     <style>
-        body {
-            background-color: #1a1a1a;
-            color: #eee;
-            font-family: "Microsoft YaHei", sans-serif;
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        #chart {
-            width: 90vw;
-            height: 90vh;
-        }
-        /* 提示框样式 */
-        .tooltip {
-            position: absolute;
-            text-align: center;
-            padding: 8px;
-            font-size: 14px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #555;
-            border-radius: 4px;
-            pointer-events: none;
-            opacity: 0;
-            color: #fff;
-        }
-        /* 连线样式 */
-        .link {
-            fill: none;
-            stroke: #555;
-            stroke-opacity: 0.4;
-            stroke-width: 1.5px;
-        }
-        /* 文字样式 */
-        text {
-            font-size: 12px;
-            pointer-events: none;
-            text-shadow: 0 1px 0 #000;
-        }
-        .root-text {
-            font-size: 16px;
-            font-weight: bold;
-            fill: #ffd700;
-        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{background:#f2f5f8;padding:20px;font-family:"Microsoft YaHei",sans-serif;}
+        h1{text-align:center;margin-bottom:20px;color:#222;}
+        #main{width:100%;height:720px;background:#fff;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:20px;}
     </style>
 </head>
 <body>
-    <div id="chart"></div>
-    <div class="tooltip" id="tooltip"></div>
+    <h1>🍜 中国八大菜系 · 一体化层次交互图谱（可下钻）</h1>
+    <div id="main"></div>
 
-    <script>
-        // 1. 数据准备 (模拟八大菜系数据)
-        const data = {
-            name: "中华美食",
+<script>
+// ====================== 多维真实数据（有机层次结构）======================
+const data = [{
+    name: "中国八大菜系",
+    children: [
+        {
+            name: "鲁菜",
+            origin: "山东", taste: "咸鲜", spicy: 1,
+            history: 2500, pop: 82, skill: 85, health: 72, heat: 65,
             children: [
                 {
-                    name: "川菜", color: "#e74c3c",
+                    name: "咸鲜醇厚",
                     children: [
-                        { name: "核心味型", children: ["麻辣", "鱼香", "怪味", "红油"] },
-                        { name: "代表技法", children: ["小炒", "干煸", "水煮", "干烧"] },
-                        { name: "灵魂食材", children: ["花椒", "郫县豆瓣", "辣椒", "姜蒜"] }
+                        { name: "爆炒", value: 12 },
+                        { name: "清炖", value: 10 },
+                        { name: "红烧", value: 8 }
                     ]
                 },
                 {
-                    name: "粤菜", color: "#2ecc71",
+                    name: "经典名菜",
                     children: [
-                        { name: "核心味型", children: ["清鲜", "脆嫩", "原汁原味", "五香"] },
-                        { name: "代表技法", children: ["蒸", "煲汤", "白灼", "烧腊"] },
-                        { name: "灵魂食材", children: ["海鲜", "老火靓汤料", "烧鹅", "叉烧"] }
-                    ]
-                },
-                {
-                    name: "鲁菜", color: "#f1c40f",
-                    children: [
-                        { name: "核心味型", children: ["咸鲜", "酱香", "葱香", "糖醋"] },
-                        { name: "代表技法", children: ["爆", "扒", "拔丝", "塌"] },
-                        { name: "灵魂食材", children: ["大葱", "海鲜", "高汤", "甜面酱"] }
-                    ]
-                },
-                {
-                    name: "苏菜", color: "#3498db",
-                    children: [
-                        { name: "核心味型", children: ["清淡", "微甜", "鲜香", "酥烂"] },
-                        { name: "代表技法", children: ["炖", "焖", "煨", "焐"] },
-                        { name: "灵魂食材", children: ["河鲜", "松鼠桂鱼", "大闸蟹", "火腿"] }
-                    ]
-                },
-                {
-                    name: "湘菜", color: "#e67e22",
-                    children: [
-                        { name: "核心味型", children: ["酸辣", "香辣", "腊味", "油重色浓"] },
-                        { name: "代表技法", children: ["煨", "炖", "腊", "蒸"] },
-                        { name: "灵魂食材", children: ["剁椒", "腊肉", "豆豉", "茶油"] }
-                    ]
-                },
-                {
-                    name: "闽菜", color: "#9b59b6",
-                    children: [
-                        { name: "核心味型", children: ["鲜香", "酸甜", "红糟", "清淡"] },
-                        { name: "代表技法", children: ["糟", "溜", "炖", "爆"] },
-                        { name: "灵魂食材", children: ["红糟", "海鲜", "佛跳墙料", "沙茶"] }
-                    ]
-                },
-                {
-                    name: "浙菜", color: "#1abc9c",
-                    children: [
-                        { name: "核心味型", children: ["鲜嫩", "软滑", "清鲜", "爽脆"] },
-                        { name: "代表技法", children: ["炒", "炸", "烩", "溜"] },
-                        { name: "灵魂食材", children: ["西湖醋鱼", "东坡肉", "龙井茶", "竹笋"] }
-                    ]
-                },
-                {
-                    name: "徽菜", color: "#95a5a6",
-                    children: [
-                        { name: "核心味型", children: ["重油", "重色", "重火功", "醇厚"] },
-                        { name: "代表技法", children: ["烧", "炖", "熏", "蒸"] },
-                        { name: "灵魂食材", children: ["臭鳜鱼", "火腿", "石耳", "山珍"] }
+                        { name: "九转大肠", value: 5 },
+                        { name: "葱烧海参", value: 4 },
+                        { name: "油焖大虾", value: 3 }
                     ]
                 }
             ]
-        };
-
-        // 2. 画布设置
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        const radius = Math.min(width, height) / 2 - 100;
-
-        const svg = d3.select("#chart")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", `translate(${width / 2},${height / 2})`);
-
-        // 3. 创建布局
-        const root = d3.hierarchy(data);
-        // 使用径向树布局
-        const treeLayout = d3.tree()
-            .size([2 * Math.PI, radius])
-            .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
-
-        treeLayout(root);
-
-        // 4. 绘制连线 (Links)
-        svg.selectAll(".link")
-            .data(root.links())
-            .enter().append("path")
-            .attr("class", "link")
-            .attr("d", d3.linkRadial()
-                .angle(d => d.x)
-                .radius(d => d.y))
-            .attr("stroke", d => d.target.data.color || "#555") // 连线颜色跟随节点
-            .attr("stroke-opacity", 0.6);
-
-        // 5. 绘制节点 (Nodes)
-        const node = svg.selectAll(".node")
-            .data(root.descendants())
-            .enter().append("g")
-            .attr("class", "node")
-            .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`);
-
-        // 添加圆点
-        node.append("circle")
-            .attr("r", d => d.depth === 0 ? 10 : (d.depth === 1 ? 6 : 4))
-            .attr("fill", d => d.data.color || "#fff")
-            .attr("stroke", "#1a1a1a")
-            .attr("stroke-width", 2)
-            .on("click", clicked) // 点击事件
-            .on("mouseover", mouseOver) // 悬停事件
-            .on("mouseout", mouseOut);
-
-        // 添加文字
-        node.append("text")
-            .attr("dy", "0.31em")
-            .attr("x", d => d.x < Math.PI === !d.children ? 8 : -8) // 文字左右分布
-            .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
-            .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null) // 下半圆文字旋转
-            .text(d => d.data.name)
-            .attr("fill", d => d.depth === 0 ? "#ffd700" : (d.depth === 1 ? "#fff" : "#aaa"))
-            .attr("font-weight", d => d.depth === 1 ? "bold" : "normal")
-            .attr("font-size", d => d.depth === 0 ? "16px" : (d.depth === 1 ? "14px" : "10px"));
-
-        // 6. 交互逻辑
-
-        // 提示框逻辑
-        const tooltip = d3.select("#tooltip");
-
-        function mouseOver(event, d) {
-            tooltip.transition().duration(200).style("opacity", .9);
-            let content = `<strong>${d.data.name}</strong>`;
-            if(d.data.children) content += `<br/><span style="color:#888">点击展开/折叠</span>`;
-            tooltip.html(content)
-                .style("left", (event.pageX + 15) + "px")
-                .style("top", (event.pageY - 28) + "px");
-
-            // 高亮相连的线
-            d3.select(this).attr("stroke", "#fff").attr("stroke-width", 3);
-        }
-
-        function mouseOut(event, d) {
-            tooltip.transition().duration(500).style("opacity", 0);
-            d3.select(this).attr("stroke", "#1a1a1a").attr("stroke-width", 2);
-        }
-
-        // 点击折叠/展开逻辑
-        function clicked(event, d) {
-            if (d.children) {
-                // 如果已展开，则折叠
-                d._children = d.children;
-                d.children = null;
-            } else {
-                // 如果已折叠，则展开 (如果有子节点)
-                if (d._children) {
-                    d.children = d._children;
-                    d._children = null;
+        },
+        {
+            name: "川菜",
+            origin: "四川", taste: "麻辣", spicy: 5,
+            history: 2200, pop: 96, skill: 90, health: 58, heat: 78,
+            children: [
+                {
+                    name: "麻辣辛香",
+                    children: [
+                        { name: "干煸", value: 14 },
+                        { name: "水煮", value: 11 },
+                        { name: "鱼香", value: 9 }
+                    ]
+                },
+                {
+                    name: "经典名菜",
+                    children: [
+                        { name: "麻婆豆腐", value: 5 },
+                        { name: "宫保鸡丁", value: 4 },
+                        { name: "水煮鱼", value: 3 }
+                    ]
                 }
+            ]
+        },
+        {
+            name: "粤菜",
+            origin: "广东", taste: "清鲜", spicy: 1,
+            history: 2000, pop: 90, skill: 88, health: 85, heat: 55,
+            children: [
+                {
+                    name: "清鲜本味",
+                    children: [
+                        { name: "清蒸", value: 13 },
+                        { name: "白灼", value: 10 },
+                        { name: "煲仔", value: 8 }
+                    ]
+                },
+                {
+                    name: "经典名菜",
+                    children: [
+                        { name: "白切鸡", value: 5 },
+                        { name: "清蒸鱼", value: 4 },
+                        { name: "烧鹅", value: 3 }
+                    ]
+                }
+            ]
+        },
+        {
+            name: "苏菜",
+            origin: "江苏", taste: "清鲜平和", spicy: 2,
+            history: 2300, pop: 78, skill: 86, health: 80, heat: 60,
+            children: [
+                {
+                    name: "清鲜平和",
+                    children: [
+                        { name: "清炖", value: 11 },
+                        { name: "糟溜", value: 9 },
+                        { name: "蜜汁", value: 7 }
+                    ]
+                },
+                {
+                    name: "经典名菜",
+                    children: [
+                        { name: "松鼠桂鱼", value: 5 },
+                        { name: "狮子头", value: 4 },
+                        { name: "文思豆腐", value: 3 }
+                    ]
+                }
+            ]
+        },
+        {
+            name: "闽菜",
+            origin: "福建", taste: "甜淡鲜香", spicy: 1,
+            history: 1800, pop: 70, skill: 82, health: 83, heat: 58,
+            children: [
+                {
+                    name: "甜淡鲜香",
+                    children: [
+                        { name: "红焖", value: 10 },
+                        { name: "糟醉", value: 8 },
+                        { name: "清煨", value: 7 }
+                    ]
+                },
+                {
+                    name: "经典名菜",
+                    children: [
+                        { name: "佛跳墙", value: 5 },
+                        { name: "荔枝肉", value: 4 },
+                        { name: "南煎肝", value: 3 }
+                    ]
+                }
+            ]
+        },
+        {
+            name: "浙菜",
+            origin: "浙江", taste: "清鲜脆嫩", spicy: 1,
+            history: 2100, pop: 75, skill: 84, health: 82, heat: 57,
+            children: [
+                {
+                    name: "清鲜脆嫩",
+                    children: [
+                        { name: "滑炒", value: 11 },
+                        { name: "清蒸", value: 9 },
+                        { name: "糟熘", value: 8 }
+                    ]
+                },
+                {
+                    name: "经典名菜",
+                    children: [
+                        { name: "西湖醋鱼", value: 5 },
+                        { name: "龙井虾仁", value: 4 },
+                        { name: "东坡肉", value: 3 }
+                    ]
+                }
+            ]
+        },
+        {
+            name: "湘菜",
+            origin: "湖南", taste: "香辣", spicy: 4,
+            history: 1900, pop: 88, skill: 83, health: 65, heat: 72,
+            children: [
+                {
+                    name: "香辣浓郁",
+                    children: [
+                        { name: "小炒", value: 13 },
+                        { name: "剁椒", value: 10 },
+                        { name: "熏腊", value: 8 }
+                    ]
+                },
+                {
+                    name: "经典名菜",
+                    children: [
+                        { name: "剁椒鱼头", value: 5 },
+                        { name: "辣椒炒肉", value: 4 },
+                        { name: "腊味合蒸", value: 3 }
+                    ]
+                }
+            ]
+        },
+        {
+            name: "徽菜",
+            origin: "安徽", taste: "咸鲜微甜", spicy: 2,
+            history: 2400, pop: 68, skill: 80, health: 70, heat: 63,
+            children: [
+                {
+                    name: "咸鲜微甜",
+                    children: [
+                        { name: "红烧", value: 12 },
+                        { name: "炖焖", value: 9 },
+                        { name: "蒸酿", value: 7 }
+                    ]
+                },
+                {
+                    name: "经典名菜",
+                    children: [
+                        { name: "臭鳜鱼", value: 5 },
+                        { name: "毛豆腐", value: 4 },
+                        { name: "红烧马鞍桥", value: 3 }
+                    ]
+                }
+            ]
+        }
+    ]
+}];
+
+// ====================== 初始化旭日图（一体化层次）======================
+const chart = echarts.init(document.getElementById('main'));
+const option = {
+    tooltip: {
+        trigger: 'item',
+        formatter: function (params) {
+            const d = params.data;
+            if (d.origin) { // 菜系层：显示全部维度
+                return `${d.name}<br/>
+                        发源地：${d.origin}<br/>
+                        味型：${d.taste}<br/>
+                        辣度：${d.spicy}/5<br/>
+                        历史：${d.history}年<br/>
+                        流行度：${d.pop}分<br/>
+                        技法丰富度：${d.skill}分<br/>
+                        健康指数：${d.health}分<br/>
+                        热量：${d.heat} kcal`;
             }
-            update(d);
+            return d.name; // 内层只显示名称
         }
-
-        // 更新视图函数
-        function update(source) {
-            const duration = 750;
-
-            // 重新计算布局
-            treeLayout(root);
-
-            // 更新连线
-            const link = svg.selectAll(".link")
-                .data(root.links(), d => d.target.data.name);
-
-            link.enter().insert("path", "g")
-                .attr("class", "link")
-                .attr("d", d3.linkRadial()
-                    .angle(d => d.x)
-                    .radius(d => d.y))
-                .attr("stroke", d => d.target.data.color || "#555")
-                .attr("stroke-opacity", 0)
-                .transition()
-                .duration(duration)
-                .attr("stroke-opacity", 0.6);
-
-            link.transition()
-                .duration(duration)
-                .attr("d", d3.linkRadial()
-                    .angle(d => d.x)
-                    .radius(d => d.y));
-
-            link.exit().remove();
-
-            // 更新节点
-            const nodeUpdate = svg.selectAll(".node")
-                .data(root.descendants(), d => d.data.name);
-
-            const nodeEnter = nodeUpdate.enter().append("g")
-                .attr("class", "node")
-                .attr("transform", d => `rotate(${source.x * 180 / Math.PI - 90}) translate(${source.y},0)`)
-                .style("opacity", 0);
-
-            nodeEnter.append("circle")
-                .attr("r", 1e-6)
-                .attr("fill", d => d.data.color || "#fff")
-                .attr("stroke", "#1a1a1a")
-                .attr("stroke-width", 2)
-                .on("click", clicked)
-                .on("mouseover", mouseOver)
-                .on("mouseout", mouseOut);
-
-            nodeEnter.append("text")
-                .attr("dy", "0.31em")
-                .attr("x", d => d.x < Math.PI === !d.children ? 8 : -8)
-                .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
-                .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
-                .text(d => d.data.name)
-                .attr("fill", d => d.depth === 0 ? "#ffd700" : (d.depth === 1 ? "#fff" : "#aaa"))
-                .attr("font-size", d => d.depth === 0 ? "16px" : (d.depth === 1 ? "14px" : "10px"))
-                .style("fill-opacity", 1e-6);
-
-            // 合并进入和更新的状态
-            const nodeMerge = nodeUpdate.merge(nodeEnter);
-
-            nodeMerge.transition()
-                .duration(duration)
-                .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`)
-                .style("opacity", 1);
-
-            nodeMerge.select("circle")
-                .attr("r", d => d.depth === 0 ? 10 : (d.depth === 1 ? 6 : 4))
-                .attr("fill", d => d.data.color || "#fff");
-
-            nodeMerge.select("text")
-                .attr("x", d => d.x < Math.PI === !d.children ? 8 : -8)
-                .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
-                .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
-                .style("fill-opacity", 1);
-
-            nodeUpdate.exit().remove();
+    },
+    series: [{
+        type: 'sunburst',
+        data: data,
+        radius: ['15%', '90%'],
+        label: {
+            rotate: 'radial',
+            fontSize: 14
+        },
+        emphasis: {
+            focus: 'descendant'
         }
-    </script>
+    }]
+};
+chart.setOption(option);
+
+// 自适应
+window.addEventListener('resize', () => chart.resize());
+</script>
 </body>
 </html>
