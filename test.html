@@ -6,13 +6,13 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:#f8f9fa; font-family:"Microsoft YaHei",sans-serif;}
-        h1{text-align:center; padding:20px 0; color:#2c3e50; font-size:30px; letter-spacing:2px; font-weight:600;}
+        body{background:#121212; font-family:"Microsoft YaHei",sans-serif;}
+        h1{text-align:center; padding:20px 0; color:#f8f8f8; font-size:38px; letter-spacing:3px; font-weight:700; text-shadow:0 0 15px rgba(255,255,255,0.3);}
         #main{width:100vw; height:90vh;}
     </style>
 </head>
 <body>
-    <h1>🍲 中国八大菜系 · 多维度层级交互式可视化</h1>
+    <1>🍲 中国八大菜系 · 多维度层级交互式可视化</h1>
     <div id="main"></div>
 
 <script>
@@ -151,7 +151,7 @@ const data = [{
             feature: "北方代表、宫廷菜系",
             material: "牛羊肉、海鲜、豆制品",
             techCore: "爆、炒、烧、炖",
-            itemStyle: {color: "#F59E0B"},
+            itemStyle: {color: "#D97706"},
             children: [
                 {name: "风味体系",itemStyle:{color:"#FBBF24"},children:[
                     {name:"咸鲜",value:12,itemStyle:{color:"#FCD34D"}},
@@ -172,7 +172,7 @@ const data = [{
             feature: "国民度最高、复合味型",
             material: "辣椒、花椒、畜禽肉",
             techCore: "水煮、干煸、鱼香",
-            itemStyle: {color: "#DC2626"},
+            itemStyle: {color: "#B91C1C"},
             children: [
                 {name: "风味体系",itemStyle:{color:"#EF4444"},children:[
                     {name:"麻辣",value:14,itemStyle:{color:"#F87171"}},
@@ -193,7 +193,7 @@ const data = [{
             feature: "清淡养生、原汁原味",
             material: "生鲜水产、禽肉、时令蔬果",
             techCore: "清蒸、白灼、煲制",
-            itemStyle: {color: "#059669"},
+            itemStyle: {color: "#047857"},
             children: [
                 {name: "风味体系",itemStyle:{color:"#10B981"},children:[
                     {name:"鲜甜",value:13,itemStyle:{color:"#34D399"}},
@@ -214,7 +214,7 @@ const data = [{
             feature: "刀工精细、江南雅致",
             material: "河鲜、禽蛋、时令素菜",
             techCore: "清炖、糟溜、蜜汁",
-            itemStyle: {color: "#2563EB"},
+            itemStyle: {color: "#1D4ED8"},
             children: [
                 {name: "风味体系",itemStyle:{color:"#3B82F6"},children:[
                     {name:"咸鲜",value:11,itemStyle:{color:"#60A5FA"}},
@@ -235,7 +235,7 @@ const data = [{
             feature: "汤菜见长、酸甜柔和",
             material: "海产干货、菌菇、肉食",
             techCore: "红焖、糟醉、清煨",
-            itemStyle: {color: "#7C3AED"},
+            itemStyle: {color: "#6D28D9"},
             children: [
                 {name: "风味体系",itemStyle:{color:"#8B5CF6"},children:[
                     {name:"酸甜",value:10,itemStyle:{color:"#A78BFA"}},
@@ -256,7 +256,7 @@ const data = [{
             feature: "江南风味、鲜脆爽口",
             material: "淡水水产、笋类、茶叶食材",
             techCore: "滑炒、糟熘、清蒸",
-            itemStyle: {color: "#DB2777"},
+            itemStyle: {color: "#BE185D"},
             children: [
                 {name: "风味体系",itemStyle:{color:"#EC4899"},children:[
                     {name:"清鲜",value:11,itemStyle:{color:"#F472B6"}},
@@ -277,7 +277,7 @@ const data = [{
             feature: "下饭重油、烟熏特色",
             material: "辣椒、腊味、淡水鱼",
             techCore: "小炒、剁椒、熏腊",
-            itemStyle: {color: "#EA580C"},
+            itemStyle: {color: "#C2410C"},
             children: [
                 {name: "风味体系",itemStyle:{color:"#F97316"},children:[
                     {name:"香辣",value:13,itemStyle:{color:"#FB923C"}},
@@ -298,7 +298,7 @@ const data = [{
             feature: "山林风味、炖焖为主",
             material: "山珍野味、豆制品、腌货",
             techCore: "红烧、炖焖、蒸酿",
-            itemStyle: {color: "#4B5563"},
+            itemStyle: {color: "#1F2937"},
             children: [
                 {name: "风味体系",itemStyle:{color:"#6B7280"},children:[
                     {name:"咸鲜",value:12,itemStyle:{color:"#9CA3AF"}},
@@ -317,12 +317,15 @@ const data = [{
 
 const chart = echarts.init(document.getElementById('main'));
 const option = {
+    backgroundColor: '#121212',
     tooltip: {
         trigger: 'item',
-        backgroundColor: "rgba(30,30,30,0.9)",
-        textStyle: {color:"#fff",fontSize:15,lineHeight:1.8},
-        padding:15,
-        borderRadius:8,
+        backgroundColor: "rgba(20,20,20,0.98)",
+        textStyle: {color:"#fff",fontSize:18,lineHeight:1.9},
+        padding:18,
+        borderRadius:10,
+        borderColor:'#fff',
+        borderWidth:1,
         formatter: function (params) {
             const d = params.data;
             if (d.origin) {
@@ -345,31 +348,33 @@ const option = {
     },
     series: [{
         type: 'sunburst',
-        radius: ['8%', '92%'],
+        radius: ['10%', '90%'],
         center: ['50%','50%'],
         label: {
             rotate: 'radial',
-            fontSize: 17,
-            fontWeight: "500",
+            fontSize: 20,
+            fontWeight: "600",
             color: "#fff",
             show: true,
-            overflow: 'break'
+            overflow: 'break',
+            textShadowColor: 'rgba(0,0,0,0.6)',
+            textShadowBlur: 3
         },
         emphasis: {
             focus: 'descendant',
             label: {
-                fontSize: 19,
+                fontSize: 24,
                 fontWeight: "bold"
             },
             itemStyle: {
-                shadowBlur:15,
-                shadowColor:"rgba(0,0,0,0.3)"
+                shadowBlur:25,
+                shadowColor:"rgba(255,255,255,0.4)"
             }
         },
         itemStyle: {
-            borderRadius: 10,
+            borderRadius: 12,
             borderColor: "#ffffff",
-            borderWidth: 1.5
+            borderWidth: 2
         },
         data: data
     }]
