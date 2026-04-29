@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <1>🍲 中国八大菜系 · 多维度层级交互式可视化</h1>
+    <h1>🍲 中国八大菜系 · 多维度层级交互式可视化</h1>
     <div id="main"></div>
 
 <script>
@@ -140,9 +140,11 @@ const dishInfo = {
     }
 };
 
-// 原有菜系数据完全保留
+// 原有菜系数据完全保留 + 仅中心文字单独设置横向排列
 const data = [{
     name: "中国八大菜系",
+    // 核心：只让中心这几个字水平显示
+    label: { rotate: 0 },
     children: [
         {
             name: "鲁菜",
@@ -352,18 +354,18 @@ const option = {
         center: ['50%','50%'],
         label: {
             rotate: 'radial',
-            fontSize: 20,
-            fontWeight: "600",
-            color: "#fff",
+            fontSize: 17,
+            fontWeight: "700",
+            color: "#ffffff",
             show: true,
             overflow: 'break',
-            textShadowColor: 'rgba(0,0,0,0.6)',
-            textShadowBlur: 3
+            textShadowColor: 'rgba(0,0,0,0.8)',
+            textShadowBlur: 4
         },
         emphasis: {
             focus: 'descendant',
             label: {
-                fontSize: 24,
+                fontSize: 21,
                 fontWeight: "bold"
             },
             itemStyle: {
